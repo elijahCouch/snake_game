@@ -30,6 +30,20 @@ let dy = 0;
 let foodX;
 let foodY;
 
+
+
+console(leftRightArrowsOnlyEnabled)
+let leftRightArrowsOnlyEnabled = false
+const leftRightArrowsOnlyCheckbox = document.getElementById('leftRightOnly');
+wallCollisionCheckbox.addEventListener('change', () => {
+    leftRightArrowsOnlyEnabled = leftRightArrowsOnlyCheckbox.checked;
+});
+
+console(leftRightArrowsOnlyEnabled)
+
+
+
+
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < rows; i++) {
@@ -115,37 +129,78 @@ function generateFood() {
     foodY = Math.floor(Math.random() * rows);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 function handleKeyPress(event) {
     const keyCode = event.keyCode;
-    switch (keyCode) {
-        case 37:
-            if (dx !== 1) {
-                dx = -1;
-                dy = 0;
-            }
-            break;
-        case 38:
-            if (dy !== 1) {
-                dx = 0;
-                dy = -1;
-            }
-            break;
-        case 39:
-            if (dx !== -1) {
-                dx = 1;
-                dy = 0;
-            }
-            break;
-        case 40:
-            if (dy !== -1) {
-                dx = 0;
-                dy = 1;
-            }
-            break;
-        default:
-            break;
+
+    if (leftRightArrowsOnlyEnabled) {
+        switch (keyCode) {
+            case 37:
+                if (dx !== 1) {
+                    dx = -1;
+                    dy = 0;
+                }
+                break;
+            case 39: // Right arrow
+                if (dx !== -1) {
+                    dx = 1;
+                    dy = 0;
+                }
+                break;
+            default:
+            
+                return;
+        }
+    } else {
+        switch (keyCode) {
+            case 37: 
+                if (dx !== 1) {
+                    dx = -1;
+                    dy = 0;
+                }
+                break;
+            case 38:
+                if (dy !== 1) {
+                    dx = 0;
+                    dy = -1;
+                }
+                break;
+            case 39: 
+                if (dx !== -1) {
+                    dx = 1;
+                    dy = 0;
+                }
+                break;
+            case 40: 
+                if (dy !== -1) {
+                    dx = 0;
+                    dy = 1;
+                }
+                break;
+            default:
+            
+                return;
+        }
     }
 }
+
+
+
+
+
+
+
 
 function gameLoop() {
     if (!moveSnake()) {
@@ -173,5 +228,7 @@ function init() {
     document.addEventListener('keydown', handleKeyPress);
     setTimeout(gameLoop, gameSpeed);
 }
+
+
 
 init();
