@@ -30,18 +30,14 @@ let dy = 0;
 let foodX;
 let foodY;
 
-
+let score = 0;
+let gameOver = false;
 
 let leftRightArrowsOnlyEnabled = false;
 const leftRightArrowsOnlyCheckbox = document.getElementById('leftRightOnly');
 leftRightArrowsOnlyCheckbox.addEventListener('change', () => {
     leftRightArrowsOnlyEnabled = leftRightArrowsOnlyCheckbox.checked;
-    console.log(`Left and Right Arrows Only Enabld: ${leftRightArrowsOnlyEnabled}`);
 });
-
-
-
-
 
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -93,6 +89,7 @@ function moveSnake() {
             snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
             dx = 1;
             dy = 0;
+            gameOverHandler();
             return false;
         }
     }
@@ -100,6 +97,8 @@ function moveSnake() {
     if (head.x === foodX && head.y === foodY) {
         snake.unshift(head);
         generateFood();
+        score++;
+        document.getElementById('score').textContent = score;
     } else {
         snake.unshift(head);
         snake.pop();
@@ -108,23 +107,20 @@ function moveSnake() {
     return true;
 }
 
-
 function handleWallCollision(head) {
     if (wallCollisionEnabled) {
         if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
-            snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
+            gameOverHandler();
             return false;
         }
     } else {
-        
         if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
-            return false; 
+            return false;
         }
     }
 
     return true;
 }
-
 
 function generateFood() {
     let collision = true;
@@ -141,15 +137,18 @@ function generateFood() {
     }
 }
 
-
-
-
 function handleKeyPress(event) {
+    console.log(event.keyCode); 
     const keyCode = event.keyCode;
+
+    if (keyCode === 32 && gameOver) { 
+        restartGame();
+        return;
+    }
 
     if (leftRightArrowsOnlyEnabled) {
         switch (keyCode) {
-            case 37: 
+            case 37:
                 if (dx === -1) {
                     dx = 0;
                     dy = 1;
@@ -164,7 +163,7 @@ function handleKeyPress(event) {
                     dy = 0;
                 }
                 break;
-            case 39: 
+            case 39:
                 if (dx === -1) {
                     dx = 0;
                     dy = -1;
@@ -184,56 +183,64 @@ function handleKeyPress(event) {
                 break;
         }
     } else {
-
         switch (keyCode) {
-            case 37: 
+            case 37:
                 if (dx !== 1) {
                     dx = -1;
                     dy = 0;
                 }
                 break;
-            case 38: 
+            case 38:
                 if (dy !== 1) {
                     dx = 0;
                     dy = -1;
                 }
                 break;
-            case 39: 
+            case 39:
                 if (dx !== -1) {
                     dx = 1;
                     dy = 0;
                 }
                 break;
-            case 40: 
+            case 40:
                 if (dy !== -1) {
                     dx = 0;
                     dy = 1;
                 }
                 break;
             default:
-                
                 event.preventDefault();
                 break;
         }
     }
 }
 
+function gameOverHandler() {
+    gameOver = true;
+    document.getElementById('overlay').style.display = 'flex';
+}
 
+function restartGame() {
 
-
+    window.location.reload();
+}
 
 function gameLoop() {
     if (!moveSnake()) {
         drawGrid();
         drawFood();
         drawSnake();
-        setTimeout(gameLoop, gameSpeed);
+        if (!gameOver) {
+            setTimeout(gameLoop, gameSpeed);
+        }
         return;
     }
     drawGrid();
     drawFood();
     drawSnake();
-    setTimeout(gameLoop, gameSpeed);
+    if (!gameOver) {
+        setTimeout(gameLoop, gameSpeed);
+    }
 }
 
 function init() {
@@ -248,7 +255,5 @@ function init() {
     document.addEventListener('keydown', handleKeyPress);
     setTimeout(gameLoop, gameSpeed);
 }
-
-
 
 init();
