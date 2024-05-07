@@ -36,7 +36,7 @@ let leftRightArrowsOnlyEnabled = false;
 const leftRightArrowsOnlyCheckbox = document.getElementById('leftRightOnly');
 leftRightArrowsOnlyCheckbox.addEventListener('change', () => {
     leftRightArrowsOnlyEnabled = leftRightArrowsOnlyCheckbox.checked;
-    console.log(`Left and Right Arrows Only Enabled: ${leftRightArrowsOnlyEnabled}`);
+    console.log(`Left and Right Arrows Only Enabld: ${leftRightArrowsOnlyEnabled}`);
 });
 
 
@@ -88,6 +88,15 @@ function moveSnake() {
         return false;
     }
 
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) {
+            snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
+            dx = 1;
+            dy = 0;
+            return false;
+        }
+    }
+
     if (head.x === foodX && head.y === foodY) {
         snake.unshift(head);
         generateFood();
@@ -96,15 +105,9 @@ function moveSnake() {
         snake.pop();
     }
 
-    for (let i = 1; i < snake.length; i++) {
-        if (head.x === snake[i].x && head.y === snake[i].y) {
-            snake = [snake[0], snake[1]];
-            return false;
-        }
-    }
-
     return true;
 }
+
 
 function handleWallCollision(head) {
     if (wallCollisionEnabled) {
@@ -124,8 +127,18 @@ function handleWallCollision(head) {
 
 
 function generateFood() {
-    foodX = Math.floor(Math.random() * cols);
-    foodY = Math.floor(Math.random() * rows);
+    let collision = true;
+    while (collision) {
+        foodX = Math.floor(Math.random() * cols);
+        foodY = Math.floor(Math.random() * rows);
+        collision = false;
+        for (let i = 0; i < snake.length; i++) {
+            if (foodX === snake[i].x && foodY === snake[i].y) {
+                collision = true;
+                break;
+            }
+        }
+    }
 }
 
 
