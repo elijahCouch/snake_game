@@ -1,173 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Snake Game</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    position: relative;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            background-color: #0c0c0c;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+        }
 
-  .grid-container {
-    display: grid;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-  }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-  .cell {
-    background-color: #ccc;
-    border: 1px solid #888;
-    box-sizing: border-box;
-  }
+        .retro-text {
+            font-size: 3rem;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
 
-  .snake {
-    background-color: #333;
-  }
+        canvas {
+            border: 4px solid #0c0c0c;
+            background-color: #000;
+        }
 
-  .food {
-    background-color: red;
-  }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-  canvas {
-    border: 2px solid black;
-    position: relative;
-    z-index: 0;
-  }
-</style>
+        .settings-panel {
+            margin-top: 20px;
+            background-color: #333;
+            padding: 10px;
+            border: 1px solid #222;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #fff;
+        }
+
+        .settings-checkbox {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="500" height="500"></canvas>
-
-  <div class="grid-container" id="gridContainer"></div>
-
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    const gridSize = 20;
-    const cellSize = canvas.width / gridSize;
-
-    const gridContainer = document.getElementById('gridContainer');
-    gridContainer.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
-    gridContainer.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`;
-
-    for (let i = 0; i < gridSize * gridSize; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell');
-      gridContainer.appendChild(cell);
-    }
-
-    let snakePosition = [{ x: 10, y: 10 }];
-    let direction = 'ArrowRight';
-    let foodPosition = { x: 0, y: 0 };
-
-    function moveSnake() {
-      document.querySelectorAll('.snake').forEach(cell => cell.remove());
-      
-      let newHead = { ...snakePosition[0] };
-
-      switch (direction) {
-        case 'ArrowUp':
-          newHead.y -= 1;
-          break;
-        case 'ArrowDown':
-          newHead.y += 1;
-          break;
-        case 'ArrowLeft':
-          newHead.x -= 1;
-          break;
-        case 'ArrowRight':
-          newHead.x += 1;
-          break;
-      }
-
-      if (newHead.x < 0 || newHead.x >= gridSize || newHead.y < 0 || newHead.y >= gridSize) {
-        resetGame();
-        return;
-      }
-
-      if (snakePosition.slice(1).some(cell => cell.x === newHead.x && cell.y === newHead.y)) {
-        resetGame();
-        return;
-      }
-
-      snakePosition.unshift(newHead);
-
-      if (newHead.x === foodPosition.x && newHead.y === foodPosition.y) {
-        generateFood();
-      } else {
-        snakePosition.pop();
-      }
-
-      snakePosition.forEach((position, index) => {
-        const cell = document.createElement('div');
-        cell.classList.add('cell', 'snake');
-        cell.style.gridColumn = position.x + 1;
-        cell.style.gridRow = position.y + 1;
-        gridContainer.appendChild(cell);
-      });
-    }
-
-    function generateFood() {
-      const existingFood = gridContainer.querySelector('.food');
-      if (existingFood) {
-        existingFood.remove();
-      }
-
-      let x, y;
-      do {
-        x = Math.floor(Math.random() * gridSize);
-        y = Math.floor(Math.random() * gridSize);
-      } while (snakePosition.some(cell => cell.x === x && cell.y === y));
-
-      foodPosition = { x, y };
-
-      const foodCell = document.createElement('div');
-      foodCell.classList.add('cell', 'food');
-      foodCell.style.gridColumn = x + 1;
-      foodCell.style.gridRow = y + 1;
-      gridContainer.appendChild(foodCell);
-    }
-
-    function resetGame() {
-      snakePosition = [{ x: 10, y: 10 }];
-      direction = 'ArrowRight';
-
-      const snakeCells = gridContainer.querySelectorAll('.snake');
-      snakeCells.forEach((cell, index) => {
-        if (index > 0) {
-          cell.remove();
-        }
-      });
-
-      generateFood();
-    }
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowUp' && direction !== 'ArrowDown') {
-        direction = 'ArrowUp';
-      } else if (event.key === 'ArrowDown' && direction !== 'ArrowUp') {
-        direction = 'ArrowDown';
-      } else if (event.key === 'ArrowLeft' && direction !== 'ArrowRight') {
-        direction = 'ArrowLeft';
-      } else if (event.key === 'ArrowRight' && direction !== 'ArrowLeft') {
-        direction = 'ArrowRight';
-      }
-    });
-
-    generateFood();
-    setInterval(moveSnake, 200);
-  </script>
+    <div class="header">
+        <h1 class="retro-text">Snake Game</h1>
+    </div>
+    <div class="container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div class="settings-panel">
+            <label for="speedSlider">Speed: </label>
+            <input type="range" id="speedSlider" min="1" max="10" value="1">
+            <div class="settings-checkbox">
+                <input type="checkbox" id="leftRightOnly" name="leftRightOnly">
+                <label for="leftRightOnly">Left/Right Arrows Only</label>
+            </div>
+            <div class="settings-checkbox">
+                <input type="checkbox" id="wallCollision" name="wallCollision">
+                <label for="wallCollision">Wall Collision</label>
+            </div>
+        </div>
+    </div>
+    <script src="index.js" defer></script>
 </body>
 </html>
