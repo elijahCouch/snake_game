@@ -141,7 +141,7 @@ function handleKeyPress(event) {
     console.log(event.keyCode); 
     const keyCode = event.keyCode;
 
-    if (keyCode === 32 && gameOver) { 
+    if (keyCode === 38 && gameOver) { 
         restartGame();
         return;
     }
