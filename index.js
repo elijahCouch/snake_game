@@ -32,14 +32,13 @@ let foodY;
 
 
 
-console(leftRightArrowsOnlyEnabled)
-let leftRightArrowsOnlyEnabled = false
+let leftRightArrowsOnlyEnabled = false;
 const leftRightArrowsOnlyCheckbox = document.getElementById('leftRightOnly');
-wallCollisionCheckbox.addEventListener('change', () => {
+leftRightArrowsOnlyCheckbox.addEventListener('change', () => {
     leftRightArrowsOnlyEnabled = leftRightArrowsOnlyCheckbox.checked;
+    console.log(`Left and Right Arrows Only Enabled: ${leftRightArrowsOnlyEnabled}`);
 });
 
-console(leftRightArrowsOnlyEnabled)
 
 
 
@@ -132,37 +131,47 @@ function generateFood() {
 
 
 
-
-
-
-
-
-
-
-
-
 function handleKeyPress(event) {
     const keyCode = event.keyCode;
 
     if (leftRightArrowsOnlyEnabled) {
         switch (keyCode) {
-            case 37:
-                if (dx !== 1) {
+            case 37: 
+                if (dx === -1) {
+                    dx = 0;
+                    dy = 1;
+                } else if (dy === 1) {
+                    dx = 1;
+                    dy = 0;
+                } else if (dx === 1) {
+                    dx = 0;
+                    dy = -1;
+                } else {
                     dx = -1;
                     dy = 0;
                 }
                 break;
-            case 39: // Right arrow
-                if (dx !== -1) {
+            case 39: 
+                if (dx === -1) {
+                    dx = 0;
+                    dy = -1;
+                } else if (dy === 1) {
+                    dx = -1;
+                    dy = 0;
+                } else if (dx === 1) {
+                    dx = 0;
+                    dy = 1;
+                } else {
                     dx = 1;
                     dy = 0;
                 }
                 break;
             default:
-            
-                return;
+                event.preventDefault();
+                break;
         }
     } else {
+
         switch (keyCode) {
             case 37: 
                 if (dx !== 1) {
@@ -170,7 +179,7 @@ function handleKeyPress(event) {
                     dy = 0;
                 }
                 break;
-            case 38:
+            case 38: 
                 if (dy !== 1) {
                     dx = 0;
                     dy = -1;
@@ -189,14 +198,12 @@ function handleKeyPress(event) {
                 }
                 break;
             default:
-            
-                return;
+                
+                event.preventDefault();
+                break;
         }
     }
 }
-
-
-
 
 
 
