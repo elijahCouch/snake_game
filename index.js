@@ -1,6 +1,6 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 45;
+const gridSize = 40;
 const rows = canvas.height / gridSize;
 const cols = canvas.width / gridSize;
 
