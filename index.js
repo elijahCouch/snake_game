@@ -5,7 +5,7 @@ const rows = canvas.height / gridSize;
 const cols = canvas.width / gridSize;
 
 const snakeColor = '#008000';
-let gameSpeed = 400;
+let gameSpeed = 200;
 let gameRunning = true;
 
 const settingsPanel = document.querySelector('.settings-panel');
@@ -95,12 +95,12 @@ function moveSnake() {
     }
 
     if (head.x === foodX && head.y === foodY) {
-        snake.unshift(head);
+        snake.unshift(head, head);
         generateFood();
         score++;
         document.getElementById('score').textContent = score;
     } else {
-        snake.unshift(head);
+        snake.unshift(head,);
         snake.pop();
     }
 
