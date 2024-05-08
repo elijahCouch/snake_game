@@ -1,6 +1,6 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 20;
+const gridSize = 45;
 const rows = canvas.height / gridSize;
 const cols = canvas.width / gridSize;
 
@@ -311,7 +311,7 @@ function init() {
     leftRightArrowsOnlyCheckbox.checked = leftRightArrowsOnlyEnabled;
   
     speedSlider.value = (500 - gameSpeed) / 100;
-    updateslider();
+    updateSlider();
   }
 
   drawGrid();
