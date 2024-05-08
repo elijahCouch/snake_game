@@ -70,6 +70,7 @@ canvas {
     width: 300px;
     max-width: 100%; 
     box-sizing: border-box;
+    z-index: 1;
 }
 
 .settings-checkbox {
@@ -92,7 +93,7 @@ canvas {
 .overlay-text {
     color: #fff;
     font-size: 2rem;
-    margin-bottom: 20px;
+    margin-bottom: 50vh; 
 }
 
 
@@ -137,8 +138,7 @@ canvas {
         </div>
     </div>
     <div class="overlay" id="overlay">
-        <div class="overlay-text">Game Over!</div>
-        <div class="overlay-text">Press up arrow to Restart</div>
+        <div class="overlay-text">Game over! Press up arrow to Restart</div>
     </div>
     <script src="index.js" defer></script>
 </body>
