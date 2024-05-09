@@ -311,19 +311,19 @@ function drawFood() {
 
 
 
-//this funcinso job is to handling keybeard input events and upading the snakes directions 
+
 function handleKeyPress(event) {
   console.log(event.keyCode);
   const keyCode = event.keyCode;
-//checks if gameover flag is true and if keypress for uparrow is true if both are tru then it calls the restartgame function and continues
+
   if (keyCode === 38 && gameOver) {
     restartGame();
     return;
   }
-//next it checks if the leftRightArrowsOnlyEnabled falg is set to true if it is the function handles the left and right arrow keys press  and updats the dx and dy values to change the snakes dirction
+
   if (leftRightArrowsOnlyEnabled) {
     switch (keyCode) {
-      case 37: 
+      case 37:
         if (dx === -1) {
           dx = 0;
           dy = 1;
@@ -357,7 +357,7 @@ function handleKeyPress(event) {
         event.preventDefault();
         break;
     }
-  } else { //if letRightarrowkeysenabled is set to false then it dose these switch statemens to move the snake around via all arrow keys 
+  } else {
     switch (keyCode) {
       case 37:
         if (dx !== 1) {
@@ -391,33 +391,25 @@ function handleKeyPress(event) {
 }
 
 
-//this is the gameoverhandle this will dispaly the game over text what to do to continue playing
+
 function gameOverHandler() {
-  //it first sets the gameOver vairbale to true
   gameOver = true;
-  //then it gets the ovelay id from he html and  and sets the style.dispaly o = fleg the value for displying the property makse the target elmets a flex container allowing its child elements to be laid out using the css flexbox system
   document.getElementById("overlay").style.display = "flex";
 }
 
 
-//the restartgame function refreshs the game/page
+
 function restartGame() {
   window.location.reload();
 }
 
 
-//this is the main part of what runs the game
+
 function gameLoop() {
-// it first calls the movesnake() which handles he movmevnt of the snake and checks for collsion
-// if the moveSnake() returns false incating the game is over the function dose
-   if (!moveSnake()) {
-    //calls he drawgrid() funciton
+  if (!moveSnake()) {
     drawGrid();
-    //then calls the drawFood() function
     drawFood();
-    //and the drawsnake function
     drawSnake();
-    //if the game is over the function  sets a timeout to call it self again after the gamespeed interval  this creatse the game loop where the game state is updatined and the value canvas is redrawn at a regular interval
     if (!gameOver) {
       setTimeout(gameLoop, gameSpeed);
     }
@@ -432,11 +424,10 @@ function gameLoop() {
 }
 
 
-//this function starts the entire game starts all the functions to get things chugging along
+
+
 function init() {
-  //gets settings frome the localstorange
   const savedSettings = JSON.parse(localStorage.getItem("snakeGameSettings"));
-  //if there are saved settings it will set all the varibales that have been saved in the localstorange will be updated
   if (savedSettings) {
     gameSpeed = savedSettings.gameSpeed;
     wallCollisionEnabled = savedSettings.wallCollisionEnabled;
@@ -449,30 +440,27 @@ function init() {
   }
 
 
-//then it calls the drawgird function 
+
   drawGrid();
-  //then it sets the snake to the the postion and adds another bodycell 
   snake = [
     { x: 5, y: 5 },
     { x: 4, y: 5 },
   ];
-  //then calls all these functions
   generateFood();
   drawFood();
   drawSnake();
   document.addEventListener("keydown", handleKeyPress);
-  //and runs this setTimout method to give time to set up everthing
   setTimeout(gameLoop, gameSpeed);
 }
 
 
 
-//
+
 function updateSlider() {
   const percentage = ((speedSlider.value - speedSlider.min) / (speedSlider.max - speedSlider.min)) * 100;
   speedSlider.style.background = `linear-gradient(to right, #008000 0%, #008000 ${percentage}%, #fff ${percentage}%, #fff 100%)`;
 }
 
 
-//calls the init() function to start everything
+
 init();
