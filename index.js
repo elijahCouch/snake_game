@@ -269,29 +269,41 @@ function moveSnake() {
 
 
 
-
+//overview this bloke is incharge of checkig if the new postion of the snake head would result in a collion with the walls of the game grid 
+  //the lad takes a head object as a parameter which represents the new postion of he snakes head
 function handleWallCollision(head) {
+//it checks if wallcollsionenabled is true which determens if the snake dies when hiting the wall
   if (wallCollisionEnabled) {
+    //it checks if he head postion is out side of the game grid if head.x is less then 0  grreater or equal to the number of columens cols head.y is less then 0 or greater then or equal to he number of rows
     if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
+      //if so the it call the gameoverhandler function and returns false to  indacte the game is over
       gameOverHandler();
       return false;
     }
   } else {
+     //if walcolssionenabeld is false  the lad simply cecks if he new head postion is outside of the game grid and returns false if it is without calling the gameoverhandler() function
     if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows) {
-      return false;
+      return false;//this results in false so the snake will just stop and wait for the next keypress
     }
   }
-
+  //if no wall collsion is deteced he function returns true allawing the game to continue
   return true;
 }
 
 
 
 
-
+//this is to display the current postion of he food cells
 function drawFood() {
+  //this lad sets the fillstyle of the cnavas context to "#ff0000" which color for red 
   ctx.fillStyle = "#ff0000";
+  //the function then loops hrough the foodx and foody arrays to draw the food cells witch store the store the x and y cooordinatse of the two food cells on the grid
   for (let i = 0; i < 2; i++) {
+    
+    //for each food item the function calls the ctxfillrect() mothod to draw a square on the canavas  the prameters pased to fillrect() are foodx[i] * gridsize the x coordnatse of the food item    multiplied by the gridSize
+    //to covert it to pixel coordinates
+
+    //the gridSize prampieter is the width and height of the food item square
     ctx.fillRect(foodX[i] * gridSize, foodY[i] * gridSize, gridSize, gridSize);
   }
 }
