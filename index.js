@@ -1,10 +1,10 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 40;
+const gridSize = 20;
 const rows = canvas.height / gridSize;
 const cols = canvas.width / gridSize;
-
 const snakeColor = "#008000";
+
 let gameSpeed = 200;
 let gameRunning = true;
 
@@ -51,8 +51,18 @@ function saveSettings() {
   localStorage.setItem("snakeGameSettings", JSON.stringify(settings));
 }
 
+
+
+//overview of drawGrid function it sets a grid that the snake and food wil be drawn on 
 function drawGrid() {
+  //this line clears the canvas so we can draw a nice new pretty grid
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  //then we use a nested loop to iterate through the rows and columens of the grid and for eath cell
+  // it sets the ctx.strokestile to #ddd color light rgay and then calls the ctx.strokerect() to draw the rectanguler grid line.
+  //the grid lines are drawn using the gridSize variable to determine the size of each cell
+  //the gridSize is multiplied by the row and columens indices to he position the grid lines corretly on the canvas this is importent to have a nice clean grid to show off
+  //the grid dimensions is the number of rows and culmens is caltetde based on the canavs dimesion and the grid size
+  //the row var is set to the canvas.hegiht / gridsize and the cols varible is set to  canavas.width <span class="typewriter-part">/ this makse sures the the grid is sized properly to issure a good tight fit in the canvas so we can show off are skills
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       ctx.strokeStyle = "#ddd";
@@ -61,6 +71,11 @@ function drawGrid() {
   }
 }
 
+
+
+
+
+// overview the draw snake funciton is called whenver the game state changes so when the snake movez or grows it make sures the snake is porpely rendered on the canvas
 function drawSnake() {
   snake.forEach((segment, index) => {
     ctx.fillStyle = index === 0 ? "#00ff00" : "#008000";
@@ -129,9 +144,45 @@ function drawSnake() {
   });
 }
 
+
+
+
+
+
+
+
 function drawFood() {
   ctx.fillStyle = "#ff0000";
   ctx.fillRect(foodX * gridSize, foodY * gridSize, gridSize, gridSize);
+}
+
+
+
+
+let fruitsEaten = 0; 
+
+function generateFood() {
+  let collision = true;
+  while (collision) {
+    foodX = [];
+    foodY = [];
+    for (let i = 0; i < 2; i++) {
+      let x, y;
+      do {
+        x = Math.floor(Math.random() * cols);
+        y = Math.floor(Math.random() * rows);
+      } while (foodX.includes(x) && foodY.includes(y));
+      foodX.push(x);
+      foodY.push(y);
+    }
+    collision = false;
+    for (let i = 0; i < snake.length; i++) {
+      if ((foodX[0] === snake[i].x && foodY[0] === snake[i].y) || (foodX[1] === snake[i].x && foodY[1] === snake[i].y)) {
+        collision = true;
+        break;
+      }
+    }
+  }
 }
 
 function moveSnake() {
@@ -141,30 +192,42 @@ function moveSnake() {
     return false;
   }
 
-  for (let i = 1; i < snake.length; i++) {
-    if (head.x === snake[i].x && head.y === snake[i].y) {
-      snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
-      dx = 1;
-      dy = 0;
-      gameOverHandler();
-      return false;
+  let ateFood = false;
+  for (let i = 0; i < 2; i++) {
+    if (head.x === foodX[i] && head.y === foodY[i]) {
+      snake.unshift(head);
+      foodX.splice(i, 1);
+      foodY.splice(i, 1);
+      fruitsEaten++;
+      if (fruitsEaten === 2) { 
+        generateFood();
+        fruitsEaten = 0; 
+      }
+      score++;
+      document.getElementById("score").textContent = score;
+      ateFood = true;
+      break; 
     }
   }
 
-  if (head.x === foodX && head.y === foodY) {
-    snake.unshift(head);
-    snake.unshift(head);
-
-    generateFood();
-    score++;
-    document.getElementById("score").textContent = score;
-  } else {
+  if (!ateFood) {
+    for (let i = 1; i < snake.length; i++) {
+      if (head.x === snake[i].x && head.y === snake[i].y) {
+        snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
+        dx = 1;
+        dy = 0;
+        gameOverHandler();
+        return false;
+      }
+    }
     snake.unshift(head);
     snake.pop();
   }
 
   return true;
 }
+
+
 
 function handleWallCollision(head) {
   if (wallCollisionEnabled) {
@@ -181,20 +244,16 @@ function handleWallCollision(head) {
   return true;
 }
 
-function generateFood() {
-  let collision = true;
-  while (collision) {
-    foodX = Math.floor(Math.random() * cols);
-    foodY = Math.floor(Math.random() * rows);
-    collision = false;
-    for (let i = 0; i < snake.length; i++) {
-      if (foodX === snake[i].x && foodY === snake[i].y) {
-        collision = true;
-        break;
-      }
-    }
+
+
+function drawFood() {
+  ctx.fillStyle = "#ff0000";
+  for (let i = 0; i < 2; i++) {
+    ctx.fillRect(foodX[i] * gridSize, foodY[i] * gridSize, gridSize, gridSize);
   }
 }
+
+
 
 function handleKeyPress(event) {
   console.log(event.keyCode);
