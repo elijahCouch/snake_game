@@ -207,48 +207,66 @@ function generateFood() {
 }
 
 
-
+//this lad is the main function in this game, it handles movement of the snake the collsion detection and the growth of the snake when it eats the red cells
 function moveSnake() {
+  // it first creates a new object head the repersens the new postion of the snakes head the new postion is calulated by adding dx and the dy values wich respents the dirctions the snake is moving to the currect x an dy corr3natse of the snakse head
   const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-
+  //it then calls the handlewallocllsion function to check if the new head postion would result in a snake colding with the wall if collsion is dett the function returns false indcating game is over
   if (!handleWallCollision(head)) {
     return false;
   }
 
+//then  checks if the new head postion is on top of the red cell  if ocllsion with the red cell is detected  the new head postion is addet to the begging of the snake array which grows the snake
   let ateFood = false;
   for (let i = 0; i < 2; i++) {
     if (head.x === foodX[i] && head.y === foodY[i]) {
       snake.unshift(head);
+      // the coordinates of the eaten food item are removed from the foodx and foody arrays
       foodX.splice(i, 1);
       foodY.splice(i, 1);
+      // the fruitsEaten varibale is incremented by 1 to keep track of how many red cells the snake has eaten to determin if it needs to regerante it regregrates the cell if the varibale is === 2
       fruitsEaten++;
       if (fruitsEaten === 2) { 
         generateFood();
+        //and then resets the varibale to 0
         fruitsEaten = 0; 
       }
+      //then we add plue 1 to the score
       score++;
+      //we make sure the score div is updates to show the user he has gain a point
       document.getElementById("score").textContent = score;
+      // the atefood flag is set to true to tell that the snake has eat a cell
       ateFood = true;
       break; 
     }
   }
-
+//the first conditon checks if the atefood flag is false which means the snake head did not collid with any food items
   if (!ateFood) {
+    //inside this if statment we have a for loop that iterat[ through the snake array starting from the second element index 1 this is becuse the first element of the snake array is the head elment which weve aready checked for collsion
     for (let i = 1; i < snake.length; i++) {
+      //the loop checks is the dead postion the x and y coordnates matches any of the existing snake body segments excluding the head if a collsion is detect
       if (head.x === snake[i].x && head.y === snake[i].y) {
+        //he snake array is reset to a singe snake body cell and resets at the center of the grid 
         snake = [{ x: Math.floor(cols / 2), y: Math.floor(rows / 2) }];
+        //the dx and dy values are reset to 1 and 0 to m!e he snake move right
         dx = 1;
         dy = 0;
+        //then we call the gameover function to incate the game is over
         gameOverHandler();
+        //then we return false to indicate the game is over
         return false;
       }
     }
+    //if no collsion with the snakes body is detect the function adds the new head postion te tho beggining of the snake array moning the snake forward
     snake.unshift(head);
+    //then removes the last element of the snake array which is the tail making the snake move forward by removeing the the last element of the array so the tail gives the elsion of the snake moving so the combnation adding the head and taking away the tail will give the elusion of it moving
     snake.pop();
   }
 
   return true;
 }
+
+
 
 
 
@@ -269,12 +287,16 @@ function handleWallCollision(head) {
 
 
 
+
+
 function drawFood() {
   ctx.fillStyle = "#ff0000";
   for (let i = 0; i < 2; i++) {
     ctx.fillRect(foodX[i] * gridSize, foodY[i] * gridSize, gridSize, gridSize);
   }
 }
+
+
 
 
 
@@ -356,14 +378,20 @@ function handleKeyPress(event) {
   }
 }
 
+
+
 function gameOverHandler() {
   gameOver = true;
   document.getElementById("overlay").style.display = "flex";
 }
 
+
+
 function restartGame() {
   window.location.reload();
 }
+
+
 
 function gameLoop() {
   if (!moveSnake()) {
@@ -383,6 +411,9 @@ function gameLoop() {
   }
 }
 
+
+
+
 function init() {
   const savedSettings = JSON.parse(localStorage.getItem("snakeGameSettings"));
   if (savedSettings) {
@@ -396,6 +427,8 @@ function init() {
     updateSlider();
   }
 
+
+
   drawGrid();
   snake = [
     { x: 5, y: 5 },
@@ -407,6 +440,9 @@ function init() {
   document.addEventListener("keydown", handleKeyPress);
   setTimeout(gameLoop, gameSpeed);
 }
+
+
+
 
 function updateSlider() {
   const percentage = ((speedSlider.value - speedSlider.min) / (speedSlider.max - speedSlider.min)) * 100;
