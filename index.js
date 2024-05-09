@@ -467,7 +467,7 @@ function init() {
 
 
 
-//
+//this function is to update the slider so when the game refreahes the slider stays in the same place
 function updateSlider() {
   const percentage = ((speedSlider.value - speedSlider.min) / (speedSlider.max - speedSlider.min)) * 100;
   speedSlider.style.background = `linear-gradient(to right, #008000 0%, #008000 ${percentage}%, #fff ${percentage}%, #fff 100%)`;
