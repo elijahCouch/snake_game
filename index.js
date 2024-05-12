@@ -1,11 +1,11 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const gridSize = 20;
+const gridSize = 31;
 const rows = canvas.height / gridSize;
 const cols = canvas.width / gridSize;
 const snakeColor = "#008000";
 
-let gameSpeed = 200;
+let gameSpeed = 100;
 let gameRunning = true;
 
 const settingsPanel = document.querySelector(".settings-panel");
@@ -50,6 +50,81 @@ function saveSettings() {
   };
   localStorage.setItem("snakeGameSettings", JSON.stringify(settings));
 }
+
+
+// Function to handle touch events
+function handleTouchStart(event) {
+  const touchStartY = event.touches[0].clientY; // Get the initial touch position
+  document.addEventListener('touchend', function handleTouchEnd(event) {
+    const touchEndY = event.changedTouches[0].clientY; // Get the final touch position
+    const deltaY = touchEndY - touchStartY;
+    // If swipe distance is large enough and in upward direction, simulate up arrow key press
+    if (deltaY < -50) {
+      handleKeyPress({ keyCode: 38 }); // Simulate pressing the up arrow key
+    }
+    document.removeEventListener('touchend', handleTouchEnd); // Remove the touchend listener
+  }, { once: true }); // Use { once: true } to ensure the touchend event listener is removed after firing once
+}
+
+// Add touch event listener to the document
+document.addEventListener('touchstart', handleTouchStart);
+
+
+
+// Function to handle touch events for swipe controls
+function handleSwipeControls() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  // Add touch start event listener to the document
+  document.addEventListener('touchstart', function(event) {
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+  });
+
+  // Add touch end event listener to the document
+  document.addEventListener('touchend', function(event) {
+    const touchEndX = event.changedTouches[0].clientX;
+    const touchEndY = event.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+
+    // Determine the direction of the swipe
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Horizontal swipe
+      if (deltaX > 0) {
+        // Right swipe
+        handleKeyPress({ keyCode: 39 }); // Simulate pressing the right arrow key
+      } else {
+        // Left swipe
+        handleKeyPress({ keyCode: 37 }); // Simulate pressing the left arrow key
+      }
+    } else {
+      // Vertical swipe
+      if (deltaY > 0) {
+        // Down swipe
+        handleKeyPress({ keyCode: 40 }); // Simulate pressing the down arrow key
+      } else {
+        // Up swipe
+        handleKeyPress({ keyCode: 38 }); // Simulate pressing the up arrow key
+      }
+    }
+  });
+}
+
+// Call the function to handle swipe controls
+handleSwipeControls();
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -175,36 +250,27 @@ let fruitsEaten = 0;
 
 //this ugly bloke is used for genrating the postions of the food cells on the butiflyy drawn canavs and to make sure they dont spawn on the snake.
 function generateFood() {
-  //his bloke starts by setting the collison to true so we can run are while loop
+  // Set collision to true to enter the while loop
   let collision = true;
-  //it then runs he while loop that continesu until the vaild food postion is found so we dont put a fruit on the snake
+  // Keep generating new coordinates until a unique pair is found
   while (collision) {
-    //lets dig into how we do this. inside this looop the funciton uses two empty arrays foodx and foody to store the  x an`y coronatse of the food cells affciontly
+    // Reset foodX and foodY arrays
     foodX = [];
     foodY = [];
-    //he funciton then uses a for loop to genrate the cornadtes of he two food cells for each item it checks if the gernated corinatse arready exist in the food x and foody arrays if so it gernates a new cooordinates until a uniq pair is found
-    for (let i = 0; i < 2; i++) {
-      let x, y;
-      do {
-        x = Math.floor(Math.random() * cols);
-        y = Math.floor(Math.random() * rows);
-      } while (foodX.includes(x) && foodY.includes(y));
-      //it adds the new coordinates to the foodx and foody arrays
-      foodX.push(x);
-      foodY.push(y);
-    }
-    //after gettig the new coordinates for the two food cell the function sets the collsion valibale to false so it doisnt keep running
+    // Generate coordinates for the food cell
+    let x, y;
+    do {
+      x = Math.floor(Math.random() * cols);
+      y = Math.floor(Math.random() * rows);
+    } while (isCollisionWithSnake(x, y)); // Check if the generated coordinates collide with the snake
+    // Add the new coordinates to the foodX and foodY arrays
+    foodX.push(x);
+    foodY.push(y);
+    // Set collision to false to exit the while loop
     collision = false;
-    //then it runs a for loop to check if the new food postion collides with the snake, if ta collison is detected the function sets the collsion varibale
-    // to true and breaks out of the inner loop if no collsion is detect the function exits the while loop and returns leaving the foodx and foody arrays with the vaild food coordinates
-    for (let i = 0; i < snake.length; i++) {
-      if ((foodX[0] === snake[i].x && foodY[0] === snake[i].y) || (foodX[1] === snake[i].x && foodY[1] === snake[i].y)) {
-        collision = true;
-        break;
-      }
-    }
   }
 }
+
 
 
 //this lad is the main function in this game, it handles movement of the snake the collsion detection and the growth of the snake when it eats the red cells
@@ -226,7 +292,7 @@ function moveSnake() {
       foodY.splice(i, 1);
       // the fruitsEaten varibale is incremented by 1 to keep track of how many red cells the snake has eaten to determin if it needs to regerante it regregrates the cell if the varibale is === 2
       fruitsEaten++;
-      if (fruitsEaten === 2) { 
+      if (fruitsEaten === 1) { 
         generateFood();
         //and then resets the varibale to 0
         fruitsEaten = 0; 
@@ -266,6 +332,14 @@ function moveSnake() {
   return true;
 }
 
+function isCollisionWithSnake(x, y) {
+  for (let i = 0; i < snake.length; i++) {
+    if (x === snake[i].x && y === snake[i].y) {
+      return true; // Collision detected
+    }
+  }
+  return false; // No collision detected
+}
 
 
 
