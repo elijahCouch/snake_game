@@ -81,7 +81,7 @@ function handleSwipeControls() {
     touchStartX = event.touches[0].clientX;
     touchStartY = event.touches[0].clientY;
   });
-
+   
   // Add touch end event listener to the document
   document.addEventListener('touchend', function(event) {
     const touchEndX = event.changedTouches[0].clientX;
